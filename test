@@ -1,0 +1,141 @@
+Script started on Sun 01 Apr 2018 11:42:01 PM EDT
+[?1034hbash-4.1$ date
+Sun Apr  1 23:42:26 EDT 2018
+bash-4.1$ cat valid_list.pl
+/*Daniel Alemu
+CS330 section 002*/ 
+
+/*facts*/
+package(p1).
+package(p2).
+package(p3).
+package(p4).
+
+
+depends(p1,p2).
+depends(p2,p3).
+depends(c,b).
+% is the name of a package which is available on the system.
+
+valid_list([Head|Tail]):- 
+	package(Head),		%check the head
+    	valid_list(Tail).		%check the tail
+    	valid_list([]).		%base case/empty list
+
+% 2.  unsatisfied_dependency(P,L) Returns true when P is a dependency of some member of L, 
+%  but P is not a member of L itself.*/
+
+
+list_member(X, [X|_Tail]).	% helper predicate list_member  checks the given value if it exist in the list
+	list_member(X, [_Head|Tail]):- 
+	list_member(X,Tail).
+
+not_member(P,L):-			%helper predicate check P in the member of list using helper predicate list member	
+	list_member(P,L),!,fail.	%change the output if it's true to false or vice vers
+	not_member(_,_).
+
+unsatisfied_dependency(P,L):- 		%
+	list_member(X,L),
+	not_member(P,L),
+	depends(P,X). 
+
+%3.  unsatisfied_dependency(L) 
+%Returns true when any member of L has an unsatisfied dependency. 
+
+unsatisfied_dependency(L):- depends(Y,X),list_member(X,L),not_member(Y,L).
+
+
+% 4.  dependency_check(L) 
+% Returns true when  depends(Y,X).
+% L has no unsatisfied dependencies.
+
+
+dependency_check(L):- unsatisfied_dependency(L),!,fail.	%return true if L has no unsatisfied dependency 
+	dependency_check(_).
+
+%  5. ext_depends(P1,P2)        
+%  Returns true when P1 depends on package P2, 
+%   either directly or inderectly by some sequence of of dependencies. 
+
+%check dependens directly or indirectly 
+ext_depends(X,Y):- 
+		depends(X,Y).		
+	ext_depends(X,Y):- 
+		depends(X,Z), 
+	ext_depends(Z,Y).
+bash-4.1$ valid_list([]).
+bash: syntax error near unexpected token `[]'
+bash-4.1$ valid_list([]).[C[C[C[C[C[C[C[C[C[Ccat valid_list.pl[C[C[C[C[C[C[C[C[C[Cdate[Kswipl --goal=valid_list --stand_alone=true --quiet -o valid_list valid_list.pl[C[C[C[C[C[C[C[C[C[Ccat valid_list.pl[K[C[C[C[C[C[C[C[C[C[C[61@swipl --goal=valid_list --stand_alone=true --quiet -o valid_lis[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+[?1034h?- ext_depends(p3,p2).2,p1).3).1,p3).[C[C[Cdependency_check([p3,p1]).2,p1]).1,p1]).2,p3]).1,p2]).[C[C[Cunsatisfied_dependency([p2,p1]).3,p1]).2]).1,p2]).p2,[p1,p3]).3,[p1,p2]).4]).1,[p1,p3,p4]).2,[p1,p3,p4]).[C[C[C[15Pvalid_list([p2,p3,p8]).1,p2,p3,p6]).4]).]).[K[C[C[Cunsatisfied_dependency([c,b]).b,c]).[3P).]).[1P).c]).b,c]).c,b]).[2Px]).[1P]).b]).c]).b,c]).c,b]).[C[C[C[4Pvalid_list([p1,p2,p3,p4]).[C[C[Cunsatisfied_dependency(p2,[p1,p3]).[3P[p1,p3]).[C[C[C[6Pdependency_check([p2,p3]).[C[C[Cunsatisfied_dependency([c,a]).[C[C[C[4Pdependency_check([p2,p3]).1,p3]).2,p3]).1,p3]).2]).[C[C[Cunsatisfied_dependency([c,a]).[1Pp3]).1,p3]).2,p1]).1,p2]).3]).p3,[p1,p3]).2,[p1,p3]).3,[p1,p2]).3]).1,[p2,p3]).1,p3]).4]).3,[p1,p4]).2,[p1,p4]).,p3]).1,[p2,p4,p3]).1,p4,p3]).[C[C[C[15Pvalid_list([p1,p2,p3]).,p8]).4]).]).[K[C[C[Cdependency_check([p7]).6]).4,p3]).2,p3]).1]).4,p1]).[3P]).1,p4]).2]).3]).2]).[C[C[C[7Pext_depends(p1,p3).4,p2).1,p3).[C[C[Cdependency_check([p1,p2]).[C[C[C[7Pext_depends(p1,p3).4,p2).1).6).1,p6).4,p6).2).6).1,p6).4,p6).1).2).1,p3).[C[C[Cdependency_check([p1,p2]).3]).2]).4]).[3P4]).,p1]).2,p1]).3]).4,p3]).[3P6]).7]).[C[C[C[8Pvalid_list([]).p1,p2,p3,p4]).]).[K
+[1mtrue.[0m
+
+?- valid_list([]).[C[C[Cext_depends(p3,p2).2,p1).3).1,p3).[C[C[Cdependency_check([p3,p1]).2,p1]).1,p1]).2,p3]).1,p2]).[C[C[Cunsatisfied_dependency([p2,p1]).3,p1]).2]).1,p2]).p2,[p1,p3]).3,[p1,p2]).4]).1,[p1,p3,p4]).2,[p1,p3,p4]).[C[C[C[15Pvalid_list([p2,p3,p8]).1,p2,p3,p6]).4]).]).[K[C[C[Cunsatisfied_dependency([c,b]).b,c]).[3P).]).[1P).c]).b,c]).c,b]).[2Px]).[1P]).b]).c]).b,c]).c,b]).[C[C[C[4Pvalid_list([p1,p2,p3,p4]).[C[C[Cunsatisfied_dependency(p2,[p1,p3]).[3P[p1,p3]).[C[C[C[6Pdependency_check([p2,p3]).[C[C[Cunsatisfied_dependency([c,a]).[C[C[C[4Pdependency_check([p2,p3]).1,p3]).2,p3]).1,p3]).2]).[C[C[Cunsatisfied_dependency([c,a]).[1Pp3]).1,p3]).2,p1]).1,p2]).3]).p3,[p1,p3]).2,[p1,p3]).3,[p1,p2]).3]).1,[p2,p3]).1,p3]).4]).3,[p1,p4]).2,[p1,p4]).,p3]).1,[p2,p4,p3]).1,p4,p3]).[C[C[C[15Pvalid_list([p1,p2,p3]).,p8]).[3P]).
+[1mtrue.[0m
+
+?- valid_list([p1,p2,p3]).,]).p]).4]).
+[1mtrue.[0m
+
+?- valid_list([p1,p2,p3,p4]).[1P,p4]).7,p4]).
+[1;31mfalse.[0m
+
+?- valid_list([p1,p2,p7,p4]).[1P]).8]).7]).[1P]).
+[1;31mfalse.[0m
+
+?- valid_list([p1,p2,p7,p8]).4]).3,p4]).[3P]).]).[K[C[C[Cext_depends(p3,p2).2,p1).3).1,p3).[C[C[Cdependency_check([p3,p1]).2,p1]).1,p1]).2,p3]).1,p2]).[C[C[Cunsatisfied_dependency([p2,p1]).3,p1]).2]).1,p2]).p2,[p1,p3]).3,[p1,p2]).4]).1,[p1,p3,p4]).2,[p1,p3,p4]).[C[C[C[15Pvalid_list([p2,p3,p8]).1,p2,p3,p6]).4]).]).[K[C[C[Cunsatisfied_dependency([c,b]).b,c]).[3P).]).[1P).c]).b,c]).c,b]).[2Px]).[1P]).b]).c]).b,c]).c,b]).[C[C[C[4Pvalid_list([p1,p2,p3,p4]).[C[C[Cunsatisfied_dependency(p2,[p1,p3]).[3P[p1,p3]).[C[C[C[6Pdependency_check([p2,p3]).[C[C[Cunsatisfied_dependency([c,a]).[C[C[C[4Pdependency_check([p2,p3]).1,p3]).2,p3]).1,p3]).2]).[C[C[Cunsatisfied_dependency([c,a]).[1Pp3]).1,p3]).2,p1]).1,p2]).3]).p3,[p1,p3]).2,[p1,p3]).3,[p1,p2]).3]).1,[p2,p3]).1,p3]).4]).3,[p1,p4]).2,[p1,p4]).,p3]).1,[p2,p4,p3]).1,p4,p3]).[C[C[C[15Pvalid_list([p1,p2,p3]).,p8]).4]).]).[K[C[C[Cdependency_check([p7]).6]).4,p3]).2,p3]).1]).4,p1]).[3P]).1,p4]).2]).3]).2]).[C[C[C[7Pext_depends(p1,p3).4,p2).1).6).1,p6).4,p6).2).3).[C[C[C).[Kext_depends(p1,p3[C[C[Cdependency_check([p2,p1]).1,p2]).[3P6]).3,p6]).4]).1,p4]).2]).4,p2]).1]).[C[C[Cunsatisfied_dependency([p4,p1]).3,p1]).2]).4]).2,p4]).3]).1]).1,p4]).3]).2]).2,p4]).,p1]).p1,[p2,p4,p1]).3,[p2,p4,p3]).1]).1,[p2,p4,p3]).2,[p1,p4,p3]).[C[C[C[12Pvalid_list([p1,p3,p4,p9]).2]).2]).[K1]).first_package]).a]).[K,b,c]).[4P]).first_package]).a]).[K,b,c]).[C[C[Cunsatisfied_dependency(p2,[p1,p5,p6]).5,[p1,p2,p6]).2,[p1,p4,p5]).5,[p1,p2,p6]).2,[p1,p5,p6]).[C[C[C[18Pvalid_list([a,b,c]).[4P]).first_package]).a]).[K,b,c]).[4P]).first_package]).p1]).[K2]).1,p3,p4,p2]).9]).[C[C[Cunsatisfied_dependency(p2,[p1,p4,p3]).1,[p2,p4,p3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency(p1,[p2,p4,p3]).[1P,p4,p3]).1,p4,p3]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p1,[p1,p4,p3]).[1P,[p1,p4,p3]).2,[p1,p4,p3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency(p2,[p1,p4,p3]).[1P,p4,p3]).2,p4,p3]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p2,[p2,p4,p3]).[1P[p2,p4,p3]).[1P[p2,p4,p3]).[1P[p2,p4,p3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency([p2,p4,p3]).[1P,p3]).[1P,p3]).[1Pp3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency([p2,p3]).[1P,p3]).1,p3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency([p1,p3]).[1P]).2]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency([p1,p2]).[1P,p2]).2,p2]).[C[C[C[1P]).1]).[C[C[C
+[1;31mfalse.[0m
+
+?- dependency_check([p1,p2])[C[C[C[C[C[C[C[C[C.
+[1mtrue.[0m
+
+?- dependency_check([p1,p2]).[1P]).1]).[1P,p1]).2,p1]).
+[1mtrue.[0m
+
+?- dependency_check([p2,p1]).[1P]).3]).[C[C[C
+[1;31mfalse.[0m
+
+?- dependency_check([p2,p3]).[1P,p3]).1,p3]).
+[1;31mfalse.[0m
+
+?- ext_depends(p1,p2)[C[C[C[C[C[C[C.
+[1mtrue [0m[1m.[0m
+
+?- ext_depends(p1,p2).[1P).3).[1P,p3).2,p3).
+[1mtrue [0m[1m.[0m
+
+?- ext_depends(p2,p3).[1P,p3).1,p3).
+[1mtrue [0m[1m.[0m
+
+?- ext_depends(p1,p3).[1P,p3).3,p3).[C[C[C[1P).2).
+[1;31mfalse.[0m
+
+?- ext_depends(p3,p2).[C[C[1P).1).
+[1;31mfalse.[0m
+
+?- 
+bash-4.1$ exit
+
+Script done on Sun 01 Apr 2018 11:47:09 PM EDT

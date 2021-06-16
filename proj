@@ -1,0 +1,148 @@
+Script started on Sun 01 Apr 2018 11:34:51 PM EDT
+[?1034hbash-4.1$ date
+Sun Apr  1 23:35:00 EDT 2018
+bash-4.1$ cat valid_list.pl
+/*Daniel Alemu
+CS330 section 002*/ 
+
+/*facts*/
+package(p1).
+package(p2).
+package(p3).
+package(p4).
+
+
+depends(p1,p2).
+depends(p2,p3).
+depends(c,b).
+% is the name of a package which is available on the system.
+
+valid_list([Head|Tail]):- 
+	package(Head),		%check the head
+    	valid_list(Tail).		%check the tail
+    	valid_list([]).		%base case/empty list
+
+% 2.  unsatisfied_dependency(P,L) Returns true when P is a dependency of some member of L, 
+%  but P is not a member of L itself.*/
+
+
+list_member(X, [X|_Tail]).	% helper predicate list_member  checks the given value if it exist in the list
+	list_member(X, [_Head|Tail]):- 
+	list_member(X,Tail).
+
+not_member(P,L):-			%helper predicate check P in the member of list using helper predicate list member	
+	list_member(P,L),!,fail.	%change the output if it's true to false or vice vers
+	not_member(_,_).
+
+unsatisfied_dependency(P,L):- 		%
+	list_member(X,L),
+	not_member(P,L),
+	depends(P,X). 
+
+%3.  unsatisfied_dependency(L) 
+%Returns true when any member of L has an unsatisfied dependency. 
+
+unsatisfied_dependency(L):- depends(Y,X),list_member(X,L),not_member(Y,L).
+
+
+% 4.  dependency_check(L) 
+% Returns true when  depends(Y,X).
+% L has no unsatisfied dependencies.
+
+
+dependency_check(L):- unsatisfied_dependency(L),!,fail.	%return true if L has no unsatisfied dependency 
+	dependency_check(_).
+
+%  5. ext_depends(P1,P2)        
+%  Returns true when P1 depends on package P2, 
+%   either directly or inderectly by some sequence of of dependencies. 
+
+%check dependens directly or indirectly 
+ext_depends(X,Y):- 
+		depends(X,Y).		
+	ext_depends(X,Y):- 
+		depends(X,Z), 
+	ext_depends(Z,Y).
+bash-4.1$ cat valid_list.pl[C[C[C[C[C[C[C[C[C[Cdate[Kswipl --goal=valid_list --stand_alone=true --quiet -o valid_list valid__list.pl
+[?1034h?- valid_list[K?- valid_list([])[C[C[C[C.
+[1mtrue.[0m
+
+?- valid_list([]).p]).1]).,]).p]).2]).,]).p]).3]).,]).p]).4]).[C[C[C
+[1mtrue.[0m
+
+?- valid_list([p1,p2,p3,p4]).[1P]).[1P]).[1P]).,]).p]).6]).
+[1;31mfalse.[0m
+
+?- valid_list([p1,p2,p3,p6]).[C[C[C[1P]).[1P]).[1P]).[1P]).[1P]).[1P]).[1P]).[1P]).[1P]).[1P]).2]).,]).p]).3]).,]).p]).8]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p1,[[1P,[2,[[C[Cp1,p2,[K[K3,p4])[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C.
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency(p2,[p1,p3,p4]).[1P,[p1,p3,p4]).1,[p1,p3,p4]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p1,[p1,p3,p4]).[C[1P,p4]).[1P,p4]).[1Pp4]).[1P,[p1,p4]).3,[p1,p4]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p3,[p1,p4]).[C[1P]).2]).
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency(p3,[p1,p2]).[1P,[p1,p2]).1,[p1,p2]).[C[C[C[C[C[1P,[p1,p2]).2,[p1,p2]).[C[C[C[C[C[C[C[C[1P]).3]).
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency([p1,p2])[C[C[C[C[C[C[C[C[C.
+[1;31mfalse.[0m
+
+?- unsatisfied_dependency([p1,p2]).[1P,p2]).3,p2]).
+[1mtrue [0m
+Unknown action:  (h for help)
+Action? 
+Unknown action: [ (h for help)
+Action? 
+Unknown action: A (h for help)
+Action? [1m.[0m
+
+?- unsatisfied_dependency([p3,p2]).[C[1P]).1]).[C[C[C
+[1mtrue [0m[1m.[0m
+
+?- unsatisfied_dependency([p3,p1]).[1P,p1]).2,p1]).[C[C[C[C[C[C
+[1;31mfalse.[0m
+
+?- dependency_check([p1,p2])[C[C[C[C[C[C[C[C[C.
+[1mtrue.[0m
+
+?- dependency_check([p1,p2]).[C[C[1P,p2]).2,p2]).[C[C[C[1P]).3]).
+[1;31mfalse.[0m
+
+?- dependency_check([p2,p3]).[1P,p3]).1,p3]).[C[C[C[1P]).1]).
+[1mtrue.[0m
+
+?- dependency_check([p1,p1]).\,p1]).[1P,p1]).[1P,p1]).2,p1]).
+[1mtrue.[0m
+
+?- dependency_check([p2,p1]).[1P,p1]).3,p1]).
+[1;31mfalse.[0m
+
+?- ext_depende[Ks(p1,p3)[C[C[C[C[C[C[C.
+[1mtrue [0m[1m.[0m
+
+?- ext_depends(p1,p3).[1P,p3).2,p3).[C[C[C[C[C
+[1mtrue [0m
+Unknown action:  (h for help)
+Action? 
+Unknown action: [ (h for help)
+Action? 
+Unknown action: A (h for help)
+Action? [1m.[0m
+
+?- ext_depends(p2,p3).[C[1P).1).[C[C
+[1;31mfalse.[0m
+
+?- ext_depends(p2,p1).[1P,p1).3,p1).[C[C[C[1P).2).[C[C
+[1;31mfalse.[0m
+
+?- 
+bash-4.1$ exit
+
+Script done on Sun 01 Apr 2018 11:41:52 PM EDT
